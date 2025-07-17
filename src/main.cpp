@@ -1,13 +1,25 @@
 #include "../include/MarketDataHandler.h"
-#include <iostream>
+#include "../include/OrderManager.h"
+#include "../include/RiskManager.h"
+#include "../include/StrategyEngine.h"
 
-void onMarketData(const MarketData& data) {
-    std::cout << "Symbol: " << data.symbol << " Price: " << data.price << " Time: " << data.timestamp << '\n';
-}
+#include <iostream>
+#include <thread>
 
 int main() {
+    OrderManager om;
+    RiskManager rm(50000);
+    StrategyEngine strategy(om, rm);
+
     MarketDataHandler mdh;
-    mdh.subscribe("AAPL", onMarketData);
-    mdh.simulateData();
+    mdh.subscribe("AAPL", [&](const MarketData& data) {
+        strategy.onMarketData(data);
+    });
+
+    std::thread marketThread([&]() {
+        mdh.simulateData();
+    });
+
+    marketThread.join();
     return 0;
 }

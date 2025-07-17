@@ -1,18 +1,31 @@
-#include "MarketDataHandler.h"
-#include <iostream>
-#include <thread>
-#include <chrono>
+#pragma once
 
-void MarketDataHandler::subscribe(const std::string& symbol, MarketDataCallback cb) {
-    subscribers.push_back({symbol, cb});
-}
+#include <string>
+#include <vector>
+#include <functional>
+#include <utility>
 
-void MarketDataHandler::simulateData() {
-    for (int i = 0; i < 100; i++) {
-        for (auto& sub : subscribers) {
-            MarketData data{sub.first, 100.0 + i, std::chrono::system_clock::now().time_since_epoch().count()};
-            sub.second(data);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-}
+// Structure to hold market data tick
+struct MarketData {
+    std::string symbol;
+    double price;
+    long long timestamp; // Epoch time in nanoseconds or milliseconds
+};
+
+// Market Data Handler class
+class MarketDataHandler {
+public:
+    using MarketDataCallback = std::function<void(const MarketData&)>;
+
+    // Subscribe to market data for a given symbol
+    void subscribe(const std::string& symbol, MarketDataCallback cb);
+
+    // Simulate live market data (for demo/testing)
+    void simulateData();
+
+    // Load historical data from CSV for backtesting
+    void loadFromCSV(const std::string& filepath);
+
+private:
+    std::vector<std::pair<std::string, MarketDataCallback>> subscribers;
+};

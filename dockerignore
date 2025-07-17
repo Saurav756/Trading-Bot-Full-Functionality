@@ -1,0 +1,9 @@
+.git
+.gitignore
+build/
+*.o
+*.obj
+*.out
+*.exe
+*.log
+data/

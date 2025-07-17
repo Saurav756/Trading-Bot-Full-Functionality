@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  tradingbot:
+    build: .
+    container_name: tradingbot
+    # Uncomment below to mount local directory for live code updates:
+    # volumes:
+    #   - .:/app
+    command: ["./tradingbot"]
